@@ -1,0 +1,126 @@
+:registerDevices
+    hwn i
+    sub i,1
+:loop
+    hwq i
+    ife a,[clock]
+        ife b,[clock+1]
+            set [clock],i
+    ife b,[clock]
+        ife a,[clock+1]
+            set [clock],i
+    ife a,[floppydrive]
+        ife b,[floppydrive+1]
+            set [floppydrive],i
+    ife b,[floppydrive]
+        ife a,[floppydrive+1]
+            set [floppydrive],i
+    ife a,[keyboard]
+        ife b,[keyboard+1]
+            set [keyboard],i
+    ife b,[keyboard]
+        ife a,[keyboard+1]
+            set [keyboard],i
+    ife a,[lem]
+        ife b,[lem+1]
+            set [lem],i
+    ife b,[lem]
+        ife a,[lem+1]
+            set [lem],i
+    ife a,[sleepchamber]
+        ife b,[sleepchamber+1]
+            set [sleepchamber],i
+    ife b,[sleepchamber]
+        ife a,[sleepchamber+1]
+            set [sleepchamber],i
+    ife a,[3dvectordisplay]
+        ife b,[3dvectordisplay+1]
+            set [3dvectordisplay],i
+    ife b,[3dvectordisplay]
+        ife a,[3dvectordisplay+1]
+            set [3dvectordisplay],i
+    ife i,0
+        set pc,hwiLem
+    std pc,loop
+
+:clock dat 0x12d0 0xb402
+:floppydrive dat 0x4fd5 0x24c5
+:keyboard dat 0x30cf 0x7406
+:lem dat 0x7349
+    :lemMem dat 0xf615
+:sleepchamber dat 0x40e4 0x1d9d
+:3dvectordisplay dat 0x42ba 0xbf3c
+
+:hwiLem
+    set a,0
+    set b,0x8000
+    set [lemMem],b
+    hwi [lem]
+    jsr refreshText
+    set pc,hwiKeyboard
+
+:refreshText
+    set i,0     			;dataInc
+	set j,[lemMem]			;screenPosInc
+
+:refreshTextLoop
+	set a,[text+i]
+	ifg a,0xff
+		set pc,changeColor
+	ife a,0x11
+		set pc,nextLine
+	ife a,0
+		set pc,pop
+	bor a,b
+	set [j],a
+	add i,1					;\
+	add j,1					; sti pc, refreshTextLoop
+	set pc,refreshTextLoop	;/
+	
+:changeColor
+	set b,a
+	and b,0xff				;deletes first half of b word
+	shl b,8
+	ifg a,0x1ff
+	bor b,0x80
+	add i,1
+	set pc,refreshTextLoop
+	
+:nextLine
+	set a,[lemMem]
+	set c,j
+	sub c,[lemMem]
+    set a,32
+    mod c,a
+    sub a,c
+	add j,a
+	add i,1
+	set pc,refreshTextLoop
+
+:hwiKeyboard
+    ias onInterrupt
+    set a,3
+    set b,0xceeb
+    hwi [keyboard]
+
+:wait
+    sub pc,1
+
+:onInterrupt
+    ife a,0xceeb
+        set pc onKeyBoardInterrupt
+
+:onKeyBoardInterrupt
+    set a,1
+    hwi [keyBoard]
+    ifn c,4
+    set [text+i],c
+    jsr refreshText
+    set a,pop
+    rfi a
+    
+:text
+    dat 0x136, "blue"
+    dat 0x11, "poo "
+    dat 0x2f0, "down white"
+    dat 0x1f0, 0x0

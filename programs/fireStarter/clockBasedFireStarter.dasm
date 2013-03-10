@@ -1,0 +1,26 @@
+jsr findClock
+
+set a,0		;\
+set b,1		; starts clock ticking 60 times per second
+hwi i		;/
+
+set a,2		;\
+set b,1		; turns on clock interrupts
+hwi i		;/
+
+iaq a		;turns on inturrupt queueing
+
+
+;"If the queue grows longer than 256 interrupts, the DCPU-16 will catch fire." --DCPU-16 Specification
+
+
+sub pc,1
+:findClock
+hwn i
+sub i,1
+:poopLoop
+hwq i
+ife b,0x12d0
+	ife a,0xb402
+    	set pc,pop
+std pc,poopLoop

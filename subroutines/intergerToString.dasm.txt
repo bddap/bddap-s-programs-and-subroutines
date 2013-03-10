@@ -1,0 +1,39 @@
+;inputs: a,b,c
+;a = interger
+;b = desired base
+;c = string start location, disabled if c = 0xffff
+;outputs: c,i,j
+;c = string end location
+;i = string length
+;j =! i if operation was unsuccessful
+;regiters modified: a,c,x,y,i,j
+
+:intergerToString
+;	set z,sp	;save original sp
+	set y,b		;y will be modified
+    set i,0
+    set j,0
+:stringToStack
+	sti x,a		;x will be modified
+	mod x,y		;tests for digit
+    sub a,x		;subtracts said digit from interger
+    set push,x	;pushes digit to stack
+	ife a,0		;if done
+    	set pc,stringFromStack
+    mul y,b	;y=b^(loop number) ;bug here
+    ifn ex,0
+    	add j,1
+    set pc,stringToStack
+
+:stringFromStack
+;	ife z,sp	;if sp = original sp
+;    	set pc,pop	;terminate subroutine
+    div y,b		;y=b^((digit count)-(loop count))
+    div [sp],y	;[sp]/y=correct digit value
+    ifn c,0xffff
+    	set [c],pop	;prints digit to string
+    ife y,1		;if we just printed the ones place
+    	set pc,pop	;then we are done
+    ifn c,0xffff
+    	add c,1		;increments to next string location
+    set pc,stringFromStack

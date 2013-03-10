@@ -1,0 +1,73 @@
+jsr lemint
+jsr screen_prep
+jsr keyboardint
+set pc,getkey
+
+:lemint
+hwn i
+:lemint_loop
+sub i,1
+hwq i
+ife a,0x7349
+ife b,0xf615
+jsr lemfound
+ife a,0xf615
+ife b,0x7349
+jsr lemfound
+set pc,lemint_loop
+:lemfound
+set b,0x8000
+hwi i
+set a,pop
+set pc,pop
+
+:keyboardint
+hwn i
+:keyboardint_loop
+sub i,1
+hwq i
+ife a,0x30cf
+ife b,0x7406
+jsr keyboardfound
+ife a,0x7406
+ife b,0x30cf
+set pc,keyboardfound
+set pc,keyboardint_loop
+:keyboardfound
+set x,i
+set pc,pop
+
+:screen_prep
+set i,0
+:screenprep_loop
+ife i,0x180
+set pc,pop
+set [0x8000+i],0x20
+sti pc,screenprep_loop
+
+:getkey
+set a,1
+:getkey_loop
+hwi x
+ife c,0x80
+jsr colorup
+ife c,0x81
+jsr colordown
+set c,0
+set pc,getkey_loop
+
+:colorup
+set i,0
+:colorup_loop
+ife i,0x180
+set pc,pop
+add [0x8000+i],0x100
+sti pc,colorup_loop
+
+:colordown
+set i,0
+:colordown_loop
+ife i,0x180
+set pc,pop
+sub [0x8000+i],0x100
+sti pc,colordown_loop

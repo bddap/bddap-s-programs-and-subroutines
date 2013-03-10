@@ -1,0 +1,25 @@
+;Find Word Length
+;
+;inputs: a,b,c,x,y,z
+;a = word start
+;b,c,x,y,z = characters that may end word
+
+;output: a,i,j
+;a = character that ended word
+;i = end of word + 1
+;j = length of word + 1
+
+;registers used: a,b,c,x,y,z,i,j
+
+:findWordLength
+	set i,a
+    set j,0
+	:findWordLengthLoop
+		set a,[i]
+    	ifn a,b
+    		ifn a,c
+        		ifn a,x
+            			ifn a,y
+                			ifn a,z
+						sti pc,findWordLengthLoop
+        set pc,pop

@@ -1,0 +1,61 @@
+:register_devices
+hwn i
+sub i,1
+:loop
+hwq i
+ife a,[clock]
+    ife b,[clock+1]
+        set [clock],i
+ife b,[clock]
+    ife a,[clock+1]
+        set [clock],i
+ife a,[floppydrive]
+    ife b,[floppydrive+1]
+        set [floppydrive],i
+ife b,[floppydrive]
+    ife a,[floppydrive+1]
+        set [floppydrive],i
+ife a,[keyboard]
+    ife b,[keyboard+1]
+        set [keyboard],i
+ife b,[keyboard]
+    ife a,[keyboard+1]
+        set [keyboard],i
+ife a,[lem]
+    ife b,[lem+1]
+        set [lem],i
+ife b,[lem]
+    ife a,[lem+1]
+        set [lem],i
+ife a,[sleepchamber]
+    ife b,[sleepchamber+1]
+        set [sleepchamber],i
+ife b,[sleepchamber]
+    ife a,[sleepchamber+1]
+        set [sleepchamber],i
+ife a,[3dvectordisplay]
+    ife b,[3dvectordisplay+1]
+        set [3dvectordisplay],i
+ife b,[3dvectordisplay]
+    ife a,[3dvectordisplay+1]
+        set [3dvectordisplay],i
+ife i,0
+set pc,print_results
+std pc,loop
+
+:clock dat 0x12d0 0xb402
+:floppydrive dat 0x4fd5 0x24c5
+:keyboard dat 0x30cf 0x7406
+:lem dat 0x7349 0xf615
+:sleepchamber dat 0x40e4 0x1d9d
+:3dvectordisplay dat 0x42ba 0xbf3c
+
+:print_results
+set [l]
+
+
+
+
+
+
+

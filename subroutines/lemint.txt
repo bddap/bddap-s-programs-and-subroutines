@@ -1,0 +1,19 @@
+lemint:
+ hwn i
+ lemint_loop:
+ sub i,1
+ hwq i
+ ife a,0x7349
+ ife b,0xf615
+ jsr lemfound
+ ife a,0xf615
+ ife b,0x7349
+ jsr lemfound
+ ife i,0
+ set pc,pop
+ set pc,lemint_loop
+
+ lemfound:
+  set b,0x8000
+  hwi i
+  set pc,pop
