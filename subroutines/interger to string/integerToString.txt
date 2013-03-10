@@ -1,0 +1,26 @@
+;inputs: a,b,c
+;a = integer
+;b = base, if b = 1 subroutine terminates immediately
+;c = string location
+;output: c
+;c = end of string + 1
+;registers modified: a,c,x,y
+
+:integerToStringinteger
+	ife b,1			;failsafe
+    		set pc,pop
+	set y,sp		;save start sp for later
+    :integerToStack
+		set x,a		;x will be modified
+        mod x,b		;find next digit
+        set push,x	;push digit to stack
+		div a,b		;prepares to check next digit
+        ifn a,0		;1/10=0
+        	set pc,inteintegergerToStack
+    :stackToString
+    	set [c],pop	;writes digit to string	
+        add c,1		;increments through string memory
+        ifn y,sp	;if sp =! start sp
+	        set pc,stackToString
+        set pc pop
+        
