@@ -1,0 +1,24 @@
+;inputs: a,b,c
+;a = start of string
+;b = base
+;c = end of string
+;outputs: z,i
+;z = integer
+;i = fail indicator, if i =! 0 number was too large
+;registers modified: c,x,y,z,i
+
+:stringToInteger
+	set y,1
+	:stringToIntegerLoop
+		set x,[c]	;get digit
+    	mul x,y		;x*b^loopCount
+        ifn ex,0
+        	set i,1 
+    	add z,x		;z=sum of every digit*value
+        ife a,c		;if we just added most digit*value
+        	set pc,pop	;terminate subroutine
+    	mul y,b		;get value for next place
+        ifn ex,0
+        	bor i,2
+       	sub c,1		;increments through string
+        set pc,stringToIntegerLoop
