@@ -1,24 +1,26 @@
-;inputs: a,b,c
-;a = start of string
+;input
+;a = string start
 ;b = base
-;c = end of string
-;outputs: z,i
+;c = string end
+;output
 ;z = integer
-;i = fail indicator, if i =! 0 number was too large
-;registers modified: c,x,y,z,i
+;[stringToIntegerError] = error indicator, 0x0 = success
 
 :stringToInteger
-	set y,1
-	:stringToIntegerLoop
-		set x,[c]	;get digit
-    	mul x,y		;x*b^loopCount
-        ifn ex,0
-        	set i,1 
-    	add z,x		;z=sum of every digit*value
-        ife a,c		;if we just added most digit*value
-        	set pc,pop	;terminate subroutine
-    	mul y,b		;get value for next place
-        ifn ex,0
-        	bor i,2
-       	sub c,1		;increments through string
-        set pc,stringToIntegerLoop
+	set x,1
+    set i,c	;starts at end of string
+:stringToIntegerLoop
+	set y,[i]	;y will be modified
+    mul y,x		;x = b^(loop count)
+    ifn ex,0 ;error, integer > 0xffff
+    	bor [stringToIntegerError],0x10
+    add z,y	;add digit value to output
+    ifn ex,0 ;error, integer > 0xffff
+    	bor [stringToIntegerError],0x100
+    ife i,a	;if we just added the first digit of string
+    	set pc,pop
+    mul x,b	;x = b^loop count
+    ifn ex,0 ;error, too many digits, integer > 0xffff
+    	bor [stringToIntegerError],0x1
+    std pc,stringToIntegerLoop
+:stringToIntegerError dat 0x0
