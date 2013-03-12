@@ -1,0 +1,51 @@
+;inputs are a,b
+;a = word start
+;b = word end
+;c = index start
+;x = index separator character
+;y = index end
+;output is z
+;z = index location
+;i = no match indicator, 0xffff means no match found
+
+set a,word
+set b,wordEnd
+set c,index
+set x,0x2c
+set y,x
+jsr,searchIndex
+sub pc,1
+:word dat "tes"
+:wordEnd dat "t,"
+:index dat "po,poop,tes,testp,tes"
+:indexEnd dat "t,"
+
+:searchIndex
+	add j,2	;2 scan index mode
+	set i,a
+    set j,c
+    set pc,searchIndexLoop
+:nextIndex
+	ifn [j],x
+    	ifn [j],y	;[j] for index end scanning
+    		sti pc,nextIndex
+    set i,a		;reset to word start
+    add j,1		;we don't want j to be a comma
+    ife [j],y		;[j] for index end scanning
+    	set pc,noMatch
+	add z,1		;index count
+
+:searchIndexLoop
+	ifn [i],[j]	;i=word counter	j=index counter ;bug here
+    	set pc,nextIndex
+	ifn [i],b		;if not word end ;[i] for scan
+    	ifn [j],x	;or not end of index word
+        	sti pc,searchIndexLoop
+    ife [i],b		;if end of word ;[i] for scan
+    	ife [j],x	;and end of index word
+        	set pc,pop
+    set pc,nextIndex
+    
+:noMatch
+	set i,0xffff
+    set pc pop

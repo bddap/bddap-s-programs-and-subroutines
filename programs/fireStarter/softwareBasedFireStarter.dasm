@@ -1,0 +1,5 @@
+iaq 1		;turns on interrrups queueing
+int i		;triggers an interupt
+sub pc,2	;sends pc back to int i
+
+;"If the queue grows longer than 256 interrupts, the DCPU-16 will catch fire." --DCPU-16 Specification

@@ -1,0 +1,24 @@
+;input:
+;a = string start
+;b = base
+;c = string end
+;output:
+;[c] = integer
+
+:stringToInteger
+	set x,a
+    set i,a
+:stringToIntegerLoop
+	mul [i],b
+    ifn i,x
+    	sti pc,stringToIntegerLoop
+    add x,1
+    ife x,c
+    	set pc,addString
+    set i,a
+    set pc,stringToIntegerLoop
+:addString
+	add [c],[i]
+    ifn i,a
+    	std pc,addString
+    sub pc,1
