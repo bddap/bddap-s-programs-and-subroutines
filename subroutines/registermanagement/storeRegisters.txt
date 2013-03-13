@@ -1,0 +1,26 @@
+:storeRegisters
+	set [adump],a
+	set [bdump],b
+	set [cdump],c
+	set [xdump],x
+	set [ydump],y
+	set [zdump],z
+	set [idump],i
+	set [jdump],j
+:registerDump
+	:adump
+	dat 0x0
+	:bdump
+	dat 0x0
+	:cdump
+	dat 0x0
+	:xdump
+	dat 0x0
+	:ydump
+	dat 0x0
+	:zdump
+	dat 0x0
+	:idump
+	dat 0x0
+	:jdump
+	dat 0x1

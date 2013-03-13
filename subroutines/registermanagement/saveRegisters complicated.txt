@@ -1,0 +1,26 @@
+:saveRegisters
+	dat 0x03e1				;\
+    :registerDumpPointer	; set [registerDump],a
+    dat registerDump		;/
+    add [registerDumpPointer],1
+    add [saveRegisters],0x400  ;increment registerPointer
+    ifl [saveRegisters],0x23e1 ;0x23e1 = set nextword, j
+    	set pc,saveRegisters
+    set [saveRegisters],0x03e1
+:registerDump
+	:adump
+	dat 0x0
+    :bdump
+    dat 0x0
+    :cdump
+    dat 0x0
+    :xdump
+    dat 0x0
+    :ydump
+    dat 0x0
+    :zdump
+    dat 0x0
+    :idump
+    dat 0x0
+    :jdump
+    dat 0x1

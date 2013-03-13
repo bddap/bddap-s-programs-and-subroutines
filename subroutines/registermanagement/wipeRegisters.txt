@@ -1,0 +1,6 @@
+:wipeRegisters
+	set a,0
+	add [wipeRegisters],0x20
+	ifl [wipeRegisters],0x8501	;0x8401 = (set j,0) + 0x20
+		set pc,wipeRegisters
+	set [wipeRegisters],0x8401	;0x8401 = set a,0
