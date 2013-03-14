@@ -1,0 +1,31 @@
+:hardwareScan
+	hwn i
+:hardwareScanNextDevice
+	std z,beginHardWareIndex
+    hwq i
+:hardwareScanLoop
+	ife b,[z]
+		ife  a,[z+1]
+			set [z],i
+	add z,2
+    ifn z,endHardwareIndex
+    	set pc,hardwareScanLoop
+    ifn i,0
+		set pc,hardwareScanNextDevice
+    set pc,pop
+
+    
+:beginHardwareIndex
+:clock dat 0x12d0
+	:clockMem dat 0xb402
+:floppyDrive dat 0x4fd5
+	:floppyDriveMem dat 0x24c5
+:keyboard dat 0x30cf
+	:keyboardMem dat 0x7406
+:lem dat 0x7349
+	:lemMem dat 0xf615
+:sleepChamber dat 0x40e4
+	:sleepChamberMem dat 0x1d9d
+:vectorDisplay dat 0x42ba
+	:vectorDisplayMem dat 0xbf3c
+:endHardwareIndex

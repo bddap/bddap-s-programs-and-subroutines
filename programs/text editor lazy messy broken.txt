@@ -1,0 +1,119 @@
+:hardwareScan
+	hwn i
+:hardwareScanNextDevice
+	std z,beginHardWareIndex
+    hwq i
+:hardwareScanLoop
+	ife b,[z]
+		ife  a,[z+1]
+			set [z],i
+	add z,2
+    ifn z,endHardwareIndex
+    	set pc,hardwareScanLoop
+    ifn i,0
+		set pc,hardwareScanNextDevice
+
+:keyboardInit
+	set a,3
+    set b,keyboard
+    hwi [keyboard]
+    ias interruptGet
+
+:
+	set [lemMem],0x8000
+    jsr lemUpdate
+    
+:refreshLem
+	set i,[lemMem]
+    set a,0x17f
+    add a,i
+    :refreshLemLoop
+    set [i],0x7700
+    ifl i,a
+    	sti pc,refreshLemLoop
+:renderText
+	set i,0x8000
+	set j,textStart
+    :renderTextLoop
+    	ife [j],0x11
+        	set pc,enter
+        ife [j],0
+        	set pc,hold
+        set [i],[j]
+        bor [i],0x6700
+        sti pc,renderTextLoop
+        
+:enter
+	set a,i
+	sub a,0x8000
+   	set b,32
+    mod a,b
+	sub b,a
+    add i,b
+    add j,1
+    set pc,renderTextLoop
+
+:hold
+;	set a,1
+;    ife c,0
+		sub pc,1
+
+:interruptGet
+	ife a,keyboard
+    	set pc,keyboardInterrupt
+:keyboardInterrupt
+	set [sp+1],refreshLem
+	set a,1
+    hwi [keyboard]
+    ife c,0
+    	rfi 1
+        ;set pc,error
+    ife c,0x10
+    	set pc,backspace
+    ife c,0x80
+    	set pc,upArrow
+    ife c,0x81
+    	set pc,downArrow
+    set b,[textEnd]
+    set [b],c
+    add [textEnd],1
+    set c,0
+    rfi 1
+    :backspace
+    	set c,0
+    	set [b],0
+    	sub [textEnd],1
+    	rfi 1
+    :upArrow
+    	sub [lemMem],0x40
+    :downArrow
+    	set c,0
+		add [lemMem],0x20
+        jsr lemUpdate
+        rfi 1
+:lemUpdate
+	set a,0
+    set b,[lemMem]
+    hwi [lem]
+    set pc,pop
+
+:variables
+:textEnd 
+	dat endHardwareIndex
+:beginHardwareIndex
+:clock dat 0x12d0
+	:clockMem dat 0xb402
+:floppyDrive dat 0x4fd5
+	:floppyDriveMem dat 0x24c5
+:keyboard dat 0x30cf
+	:keyboardMem dat 0x7406
+:lem dat 0x7349
+	:lemMem dat 0xf615
+:sleepChamber dat 0x40e4
+	:sleepChamberMem dat 0x1d9d
+:vectorDisplay dat 0x42ba
+	:vectorDisplayMem dat 0xbf3c
+:endHardwareIndex
+:textStart
+	dat 0x11
+	dat "1234567890"
