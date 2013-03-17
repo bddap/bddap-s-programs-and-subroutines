@@ -1,0 +1,33 @@
+:initiateTextEditor
+	set y,text
+    :initiateLem
+    	set b,0x8000
+    	hwi 0
+    
+:wipeScreen
+	set i,0x8000
+    :wipeScreenLoop
+	set [i],0xff00
+    ifn i,0x8180
+    	sti pc,wipeScreenLoop
+
+:renderText
+	set i,0x8000
+    set j,text
+    :renderTextLoop
+    	ife [j],0
+    		set pc,getKey
+		bor [i],[j]
+        and [i],0x0fff
+    	sti pc,renderTextLoop
+    
+:getKey
+	set a,1
+    hwi 2
+    ife c,0
+    	set pc,getKey
+    set [y],c
+    add y,1
+    set pc,wipeScreen
+    
+:text

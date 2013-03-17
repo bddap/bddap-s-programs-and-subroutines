@@ -1,0 +1,35 @@
+;renderText
+;inputs:
+;i = textStart
+;j = renderStart
+
+:renderText
+    set [j],[i]
+    bor [j],0xf000  ;color code
+    ifn [i+1],0
+        sti pc,renderText
+
+;nextLine
+;to be called from renderText
+;a = renderStart
+
+:nextLine
+    set b,i
+    sub b,a
+    mod a,32
+    sub i,a
+    add i,31
+    sti pc,renderText
+
+;changeColor
+;to be called from renderText
+;output:
+;b = new color code
+
+:changeColor
+    set b,[i]
+    shl b,1
+    ifn ex,0
+        bor b,1
+    shl b,7
+    set pc,renderText
